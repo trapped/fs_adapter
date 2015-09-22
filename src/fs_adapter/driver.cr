@@ -84,7 +84,7 @@ module FSDB
     def initialize @path, fields
       FSDB.lock_write @path do
         metadata_path = File.join @path, "metadata"
-        FSDB.lock_write metadata_path do
+        FSDB.lock_write(metadata_path) do
           File.open metadata_path, "w" do |f|
             f.puts fields.to_a.map(&.join ":").join ","
           end
@@ -141,7 +141,7 @@ module FSDB
     def add_table table_name, fields
       FSDB.lock_write @path do
         table_path = File.join @path, "#{tables.size}_#{table_name}"
-        FSDB.lock_write table_path do
+        FSDB.lock_write(table_path) do
           Dir.mkdir_p table_path unless Dir.exists? table_path
         end
         Table.new table_path, fields
