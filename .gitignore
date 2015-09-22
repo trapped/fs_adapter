@@ -8,3 +8,5 @@
 # Dependencies will be locked in application that uses them
 /.deps.lock
 
+.shards/
+shard.lock

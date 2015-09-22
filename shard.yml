@@ -1,0 +1,6 @@
+name: fs_adapter
+version: 0.1.0
+
+dependencies:
+  active_record:
+    github: waterlink/active_record.cr
