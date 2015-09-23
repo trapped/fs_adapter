@@ -9,24 +9,25 @@ module FSDB
       new(table_name, primary_field, fields, register)
     end
 
-    def initialize @table_name, primary_field, fields, register = true
-      puts "BUILD #{@table_name} #{fields.inspect}"
-      Driver.open_db db_path, &.add_table @table_name, convert_fields fields
+    def initialize @table_name, primary_field, @fields, register = true
+      puts "BUILD #{@table_name} #{@fields.inspect} at #{db_path}"
+      Driver.open_db db_path, &.add_table @table_name, convert_fields @fields
     end
 
     def create fields
       puts "CREATE #{fields.inspect}"
-      Driver.open_db db_path, &.tables[@table_name].add_row fields
+      merged = merge_fields fields
+      Driver.open_db db_path, &.table(@table_name).try &.add_row merged
     end
 
     def find id
       puts "FIND #{id}"
-      extract_fields Driver.open_db db_path, &.tables[@table_name].rows[id]
+      extract_fields Driver.open_db db_path, &.table(@table_name).row id
     end
 
     def all
       puts "ALL"
-      extract_rows Driver.open_db db_path, &.tables[@table_name].rows
+      extract_rows Driver.open_db db_path, &.table(@table_name).try &.rows
     end
 
     def where query_hash : Hash
@@ -46,6 +47,7 @@ module FSDB
     end
 
     private def extract_rows rows
+      return [] of Hash(String, ActiveRecord::SupportedType) unless rows
       rows.map { |row| extract_fields row }
     end
 
@@ -62,18 +64,34 @@ module FSDB
     end
 
     private def db_path
-      ENV["FSDB_PATH"] || "./fsdb/"
+      ENV["FSDB_PATH"]? || "#{`pwd`.chomp}/fsdb/"
+    end
+
+    private def merge_fields fields
+      result = Hash(String, String|Int64).new
+      fields.each do |k, v|
+        if @fields.has_key? k
+          v = v.to_i64 if v.is_a? Int
+          result[k] = v
+        end
+      end
+      return result
     end
 
     private def convert_fields fields
-      fields.map { |k, v|
+      converted_fields = Hash(String, String).new
+      fields.each do |k, v|
+        type_ = nil
         case v.class
         when Int
-          v = "int64"
+          type_ = "int64"
         when String
-          v = "string"
+          type_ = "string"
+        else next
         end
-      }
+        converted_fields[k] = type_
+      end
+      converted_fields
     end
   end
 end
