@@ -3,7 +3,7 @@ require "../src/**"
 
 ENV["FSDB_PATH"] = "#{__DIR__}/../test_db"
 
-module FSAdapter
+module FSDB
   module Driver
     describe "self.open_db" do
       it "opens a db" do
@@ -13,7 +13,7 @@ module FSAdapter
     end
   end
 
-  class Adapter
+  class FSAdapter
     describe "self.build" do
       it "initializes the adapter and the db" do
         build "test", "", {"name" => String, "age" => Int}

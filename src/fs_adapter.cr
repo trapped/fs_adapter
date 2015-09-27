@@ -109,6 +109,6 @@ module FSDB
       converted_fields
     end
 
-    Registry.register_adapter("fs", FSAdapter)
+    ActiveRecord::Registry.register_adapter("fs", FSAdapter)
   end
 end
