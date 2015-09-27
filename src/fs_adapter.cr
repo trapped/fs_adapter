@@ -1,8 +1,8 @@
 require "./fs_adapter/**"
 require "active_record"
 
-module FSAdapter
-  class Adapter < ActiveRecord::Adapter
+module FSDB
+  class FSAdapter < ActiveRecord::Adapter
     def self.build table_name, primary_field, fields, register = true
       new(table_name, primary_field, fields, register)
     end
