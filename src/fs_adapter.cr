@@ -10,7 +10,9 @@ module FSDB
     end
 
     def initialize @table_name, primary_field, @fields, register = true
-      Driver.open_db db_path, &.add_table(@table_name, convert_fields @fields)
+      Driver.open_db db_path, do |db|
+        db.table(@table_name) || db.add_table(@table_name, convert_fields @fields)
+      end
     end
 
     def create fields
@@ -19,7 +21,7 @@ module FSDB
     end
 
     def find id
-      extract_fields Driver.open_db db_path, &.table(@table_name).row id
+      extract_fields Driver.open_db db_path, &.table(@table_name).try &.row id
     end
 
     def all
@@ -49,6 +51,7 @@ module FSDB
 
     private def extract_fields row
       fields = Hash(String, ActiveRecord::SupportedType).new
+      return fields unless row
       row.to_h.each do |k, v|
         if v.is_a? ActiveRecord::SupportedType
           fields[k] = v

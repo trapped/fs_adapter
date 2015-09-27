@@ -28,6 +28,12 @@ module FSDB
         adapter.all.should eq [{"id" => 0, "name" => "Mario", "age" => 32}]
       end
     end
+
+    describe "#find" do
+      adapter = build "test", "", {"name" => String, "age" => Int}
+      adapter.create({"name" => "Mario", "age": 32})
+      adapter.find(0).should eq({"id" => 0, "name" => "Mario", "age" => 32})
+    end
   end
 end
 
