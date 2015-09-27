@@ -12,7 +12,7 @@ module FSDB
     end
 
     def self.adapters
-      (@@_adapters ||= [] of self).not_nil!
+      (@@adapters ||= [] of self).not_nil!
     end
 
     def initialize @table_name, primary_field, @fields, register = true
