@@ -3,7 +3,7 @@ require "active_record"
 require "dir"
 require "thread/mutex"
 
-module FSDB
+module FSAdapter
   class Adapter < ActiveRecord::Adapter
     def self.build table_name, primary_field, fields, register = true
       new(table_name, primary_field, fields, register)

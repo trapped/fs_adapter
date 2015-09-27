@@ -1,7 +1,7 @@
 require "file"
 require "dir"
 
-module FSDB
+module FSAdapter
   class LockError < Exception; end
 
   def self.lock_write path, &block

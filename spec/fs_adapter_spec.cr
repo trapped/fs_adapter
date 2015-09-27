@@ -3,7 +3,7 @@ require "../src/**"
 
 ENV["FSDB_PATH"] = "#{__DIR__}/../test_db"
 
-module FSDB
+module FSAdapter
   module Driver
     describe "self.open_db" do
       it "opens a db" do
