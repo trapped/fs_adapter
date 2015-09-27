@@ -24,7 +24,7 @@ module FSDB
       it "let you add a row and get all the rows" do
         adapter = build "test", "", {"name" => String, "age" => Int}
         adapter.all.should eq [] of Hash(String, ActiveRecord::SupportedType) unless adapter.all.size
-        id = adapter.create({"name" => "Mario", "age" => 32}).not_nil!.id
+        id = adapter.create({"name" => "Mario", "age" => 32}).not_nil!
         adapter.all.includes?({"id" => id, "name" => "Mario", "age" => 32}).should be_true
       end
     end
@@ -32,7 +32,7 @@ module FSDB
     describe "#find" do
       it "gets a single row by id" do
         adapter = build "test", "", {"name" => String, "age" => Int}
-        id = adapter.create({"name" => "Mario", "age" => 32}).not_nil!.id
+        id = adapter.create({"name" => "Mario", "age" => 32}).not_nil!
         adapter.find(id).should eq({"id" => id, "name" => "Mario", "age" => 32})
       end
     end
@@ -40,7 +40,7 @@ module FSDB
     describe "#update" do
       it "updates a single row by id" do
         adapter = build "test", "", {"name" => String, "age" => Int}
-        id = adapter.create({"name" => "Mario", "age" => 32}).not_nil!.id
+        id = adapter.create({"name" => "Mario", "age" => 32}).not_nil!
         adapter.update(id, {"age" => 33})
         adapter.find(id)["age"].should eq 33
       end

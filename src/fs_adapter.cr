@@ -17,7 +17,7 @@ module FSDB
 
     def create fields
       merged = merge_fields fields
-      Driver.open_db db_path, &.table(@table_name).try &.add_row merged
+      Driver.open_db db_path, &.table(@table_name).try &.add_row(merged).try &.id
     end
 
     private def find_ id : Int64
