@@ -23,16 +23,27 @@ module FSDB
     describe "#all, create" do
       it "let you add a row and get all the rows" do
         adapter = build "test", "", {"name" => String, "age" => Int}
-        adapter.all.should eq [] of Hash(String, ActiveRecord::SupportedType)
-        adapter.create({"name" => "Mario", "age" => 32})
-        adapter.all.should eq [{"id" => 0, "name" => "Mario", "age" => 32}]
+        adapter.all.should eq [] of Hash(String, ActiveRecord::SupportedType) unless adapter.all.size
+        id = adapter.create({"name" => "Mario", "age" => 32}).not_nil!.id
+        adapter.all.includes?({"id" => id, "name" => "Mario", "age" => 32}).should be_true
       end
     end
 
     describe "#find" do
-      adapter = build "test", "", {"name" => String, "age" => Int}
-      adapter.create({"name" => "Mario", "age": 32})
-      adapter.find(0).should eq({"id" => 0, "name" => "Mario", "age" => 32})
+      it "gets a single row by id" do
+        adapter = build "test", "", {"name" => String, "age" => Int}
+        id = adapter.create({"name" => "Mario", "age" => 32}).not_nil!.id
+        adapter.find(id).should eq({"id" => id, "name" => "Mario", "age" => 32})
+      end
+    end
+
+    describe "#update" do
+      it "updates a single row by id" do
+        adapter = build "test", "", {"name" => String, "age" => Int}
+        id = adapter.create({"name" => "Mario", "age" => 32}).not_nil!.id
+        adapter.update(id, {"age" => 33})
+        adapter.find(id)["age"].should eq 33
+      end
     end
   end
 end

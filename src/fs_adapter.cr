@@ -20,8 +20,12 @@ module FSDB
       Driver.open_db db_path, &.table(@table_name).try &.add_row merged
     end
 
-    def find id
-      extract_fields Driver.open_db db_path, &.table(@table_name).try &.row id
+    private def find_ id : Int64
+      Driver.open_db db_path, &.table(@table_name).try &.row id.not_nil!
+    end
+
+    def find id : Int64
+      extract_fields find_ id
     end
 
     def all
@@ -37,7 +41,13 @@ module FSDB
     end
 
     def update id, fields
-      puts "UPDATE #{id} FIELDS #{fields.inspect}"
+      row = find_(id)
+      return nil unless row
+      merge_fields(fields).each do |k, v|
+        row[k] = v
+      end
+      row.write
+      row
     end
 
     def delete id

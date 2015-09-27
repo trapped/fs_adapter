@@ -68,7 +68,7 @@ module FSDB
       {{io.id}}.write ({{storage.id}} as String).bytes
     end
 
-    private def read
+    def read
       FSDB.lock_read @path do
         File.open @path, "r+" do |f|
           @data.try &.["id"] = File.basename(@path).to_i64
@@ -86,7 +86,7 @@ module FSDB
       end
     end
 
-    private def write
+    def write
       FSDB.lock_write @path do
         File.open @path, "w+" do |f|
           @data.not_nil!["id"] = File.basename(@path).to_i64
@@ -117,12 +117,16 @@ module FSDB
       @fields
     end
 
+    def id
+      @data.not_nil!["id"].not_nil! as Int64
+    end
+
     def [] field
-      @data[field]
+      @data.not_nil![field]?
     end
 
     def []= field, value
-      @data[field] = value
+      @data.not_nil![field] = value
     end
 
     def to_h
