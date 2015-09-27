@@ -1,12 +1,18 @@
 require "./fs_adapter/**"
 require "active_record"
-require "dir"
-require "thread/mutex"
 
 module FSAdapter
   class Adapter < ActiveRecord::Adapter
     def self.build table_name, primary_field, fields, register = true
       new(table_name, primary_field, fields, register)
+    end
+
+    def self.register adapter
+      adapters << adapter
+    end
+
+    def self.adapters
+      (@@_adapters ||= [] of self).not_nil!
     end
 
     def initialize @table_name, primary_field, @fields, register = true
