@@ -108,5 +108,7 @@ module FSDB
       end
       converted_fields
     end
+
+    Registry.register_adapter("fs", FSAdapter)
   end
 end
