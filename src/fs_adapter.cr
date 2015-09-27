@@ -10,23 +10,19 @@ module FSDB
     end
 
     def initialize @table_name, primary_field, @fields, register = true
-      puts "BUILD #{@table_name} #{@fields.inspect} at #{db_path}"
-      Driver.open_db db_path, &.add_table @table_name, convert_fields @fields
+      Driver.open_db db_path, &.add_table(@table_name, convert_fields @fields)
     end
 
     def create fields
-      puts "CREATE #{fields.inspect}"
       merged = merge_fields fields
       Driver.open_db db_path, &.table(@table_name).try &.add_row merged
     end
 
     def find id
-      puts "FIND #{id}"
       extract_fields Driver.open_db db_path, &.table(@table_name).row id
     end
 
     def all
-      puts "ALL"
       extract_rows Driver.open_db db_path, &.table(@table_name).try &.rows
     end
 
@@ -53,11 +49,11 @@ module FSDB
 
     private def extract_fields row
       fields = Hash(String, ActiveRecord::SupportedType).new
-      row.each do |k, v|
+      row.to_h.each do |k, v|
         if v.is_a? ActiveRecord::SupportedType
           fields[k] = v
         else
-          puts "Encountered unsupported type: #{v.class}/#{typeof(value)}"
+          puts "Encountered unsupported type: #{v.class}/#{typeof(v)}"
         end
       end
       fields
@@ -82,10 +78,10 @@ module FSDB
       converted_fields = Hash(String, String).new
       fields.each do |k, v|
         type_ = nil
-        case v.class
-        when Int
+        case v.inspect
+        when "Int"
           type_ = "int64"
-        when String
+        when "String"
           type_ = "string"
         else next
         end

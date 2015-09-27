@@ -7,7 +7,7 @@ module FSDB
   module Driver
     describe "self.open_db" do
       it "opens a db" do
-        puts open_db ENV["FSDB_PATH"], &.inspect
+        open_db ENV["FSDB_PATH"], &.inspect
         Dir.exists?(ENV["FSDB_PATH"]).should be_true
       end
     end
@@ -25,7 +25,7 @@ module FSDB
         adapter = build "test", "", {"name" => String, "age" => Int}
         adapter.all.should eq [] of Hash(String, ActiveRecord::SupportedType)
         adapter.create({"name" => "Mario", "age" => 32})
-        adapter.all.should eq [{"name" => "Mario", "age" => 32}]
+        adapter.all.should eq [{"id" => 0, "name" => "Mario", "age" => 32}]
       end
     end
   end
