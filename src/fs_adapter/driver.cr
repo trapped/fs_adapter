@@ -150,11 +150,11 @@ module FSDB
     end
 
     def id
-      File.basename(@path).split("_")[0].to_i
+      File.basename(@path).split("$")[0].to_i
     end
 
     def name
-      File.basename(@path).split("_")[1]
+      File.basename(@path).split("$")[1]
     end
 
     def fields
@@ -207,7 +207,7 @@ module FSDB
     end
 
     def add_table table_name, fields : Hash(String, String)
-      table_path = File.join @path, "#{tables.size}_#{table_name}"
+      table_path = File.join @path, "#{tables.size}$#{table_name}"
       FSDB.lock_write table_path do
         Dir.mkdir_p table_path
       end
@@ -221,7 +221,7 @@ module FSDB
           &.reject(&.=~ /(.*)\.lock/i)).try(
           &.-([".", ".."])).try(
           &.map do |full_name|
-            name = full_name.split("_")
+            name = full_name.split("$")
             [name[0].to_i64, name[1], Table.new File.join(@path, full_name)]
           end).try(
           &.sort_by(&.[0] as Int64)) || Array(Array(Int64|Row|Hash(String,String))).new
