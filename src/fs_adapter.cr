@@ -30,8 +30,8 @@ module FSDB
       Driver.open_db db_path, &.table(@table_name).try &.row id.not_nil!
     end
 
-    def find id : Int64
-      extract_fields find_ id
+    def find id : Int
+      extract_fields find_ id.to_i64
     end
 
     def all
