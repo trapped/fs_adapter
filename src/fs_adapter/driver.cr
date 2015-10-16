@@ -37,12 +37,6 @@ module FSDB
   end
 
   class Row
-    private def bytes(n : Int64)
-      sz = sizeof(typeof(n))
-      shift = sz * 8
-      Array(UInt8).new(sz) { shift -= 8; (n >> shift).to_u8 }.reverse
-    end
-
     macro read_int64 io, storage
       %buffer = Slice(UInt8).new(8)
       %n = {{io.id}}.read(%buffer)
@@ -52,7 +46,7 @@ module FSDB
     end
 
     macro write_int64 io, storage
-      {{io.id}}.write bytes ({{storage.id}} as Int64)
+      {{io.id}}.write_bytes ({{storage.id}} as Int64)
     end
 
     macro read_string io, storage
@@ -65,7 +59,7 @@ module FSDB
 
     macro write_string io, storage
       write_int64 {{io.id}}, ({{storage.id}} as String).size.to_i64
-      {{io.id}}.write ({{storage.id}} as String).bytes
+      {{io.id}}.write ({{storage.id}} as String).to_slice
     end
 
     def read
